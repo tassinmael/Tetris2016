@@ -1,3 +1,4 @@
+package source;
 
 
 import java.awt.Color;
@@ -59,11 +60,33 @@ public class PanneauAffichage extends JPanel {
 		g.setColor(PARAMETRES_COULEUR);
 
 		int offset;
+		/**
+		 * Affichage des cinq meilleurs scores sur le panneau d'affichage
+		 */
 		g.setFont(FONT_MAXIMALE);
+		g.drawString("Meilleurs scores", DECALAGE_MINIMUM, offset =DECALAGE_MAXIMUM);
+		g.setFont(FONT_MINIMALE);
+		g.drawString(tetris.getTableauScores()[0], DECALAGE_MAXIMUM, offset +=TAILLE_TEXTE);
+		g.drawString(tetris.getTableauScores()[1], DECALAGE_MAXIMUM, offset +=TAILLE_TEXTE);
+		g.drawString(tetris.getTableauScores()[2], DECALAGE_MAXIMUM, offset +=TAILLE_TEXTE);
+		g.drawString(tetris.getTableauScores()[3], DECALAGE_MAXIMUM, offset +=TAILLE_TEXTE);
+		g.drawString(tetris.getTableauScores()[4], DECALAGE_MAXIMUM, offset +=TAILLE_TEXTE);
+		
+		
 		g.drawString("", DECALAGE_MINIMUM, offset = STATS);
 		g.setFont(FONT_MINIMALE);
 		
+		/**
+		 * Affichge du score de la partie en cours
+		 */
+		
+		g.drawString("" , DECALAGE_MAXIMUM, offset += TAILLE_TEXTE);
 		g.drawString("Score: " + tetris.getScore(), DECALAGE_MAXIMUM, offset += TAILLE_TEXTE);
+		
+		
+		/**
+		 * Affichage des commandes de jeu
+		 */
 		
 		g.setFont(FONT_MAXIMALE);
 		g.drawString("Commandes", DECALAGE_MINIMUM, offset = CASE_COMMANDES);

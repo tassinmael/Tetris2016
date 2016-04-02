@@ -1,3 +1,4 @@
+package source;
 
 
 /**
@@ -99,5 +100,21 @@ public class Horloge {
 	private static final long getTempsActuel() {
 		return (System.nanoTime() / 1000000L);
 	}
+	
+	public int getCycleEcoules()
+	{
+		return this.cyclesEcoules;
+	}
+	
+	public float getExcessCycles()
+	{
+		return this.excessCycles;
+	}
+	
+	public boolean isSuspendu()
+	{
+		return this.suspendu;
+	}
+	
 
 }
