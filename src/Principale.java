@@ -1,8 +1,16 @@
+package source;
 
 
 import java.awt.BorderLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.Random;
 
 import javax.swing.JFrame;
@@ -28,7 +36,21 @@ public class Principale extends JFrame {
 	 * Définition de nombre de pièces éxistantes dans le jeux.
 	 */
 	private static final int NOMBRE_TYPES_PIECES = Piece.values().length;
-		
+	
+	/**
+	 * Déclaration de nom de fichier des scores
+	 */
+	
+	private static final String NOM_FICHIER="scores.txt";
+	
+	/**
+	 * Définition de la taille de tableau des scores
+	 *
+	 */
+	
+	private final int TAILLE_TABLEAU=5;
+	private static boolean ecrire=true;
+	
 	/**
 	 * Déclaration de panneau principal du jeux.
 	 */
@@ -88,7 +110,19 @@ public class Principale extends JFrame {
 	 * Déclaration de la vitesse du jeux (diffilement des pièces).
 	 */
 	private float vitesseJeu;
-		
+	
+	/**
+	 * Déclaration de tableau des scores
+	 */
+	
+	private String [] tableauScores  ;
+	
+	private boolean stop=false;
+	private int indiceTableau;
+	private String valeurIntermidiaire;
+	private int indiceIntermidiaire;
+	
+	private int fin;
 	/**
 	 * Constructeur de la fénétre principale du jeux
 	 */
@@ -108,6 +142,28 @@ public class Principale extends JFrame {
 		 */
 		add(surface, BorderLayout.CENTER);
 		add(panneau, BorderLayout.EAST);
+		
+		this.tableauScores= new String [TAILLE_TABLEAU];
+		
+		InputStream ips;
+		try {
+			ips = new FileInputStream(NOM_FICHIER);
+		 
+			InputStreamReader ipsr=new InputStreamReader(ips);
+			BufferedReader br=new BufferedReader(ipsr);
+			String ligne;
+			int i=0;
+		
+			while ((ligne=br.readLine())!=null){
+				tableauScores[i]=ligne;
+				i++;
+			}
+				br.close();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		 
 		
 		/*
 		 * Ajout d'écouteurs sur le clavier pour permettre de 
@@ -202,6 +258,9 @@ public class Principale extends JFrame {
 		pack();
 		setLocationRelativeTo(null);
 		setVisible(true);
+		
+		
+		
 	}
 	
 	
@@ -237,6 +296,8 @@ public class Principale extends JFrame {
 			redissiner();
 			
 			
+			
+			
 			long delta = (System.nanoTime() - start) / 1000000L;
 			if(delta < HORLOGE) {
 				try {
@@ -246,6 +307,7 @@ public class Principale extends JFrame {
 				}
 			}
 		}
+		
 	}
 	
 	
@@ -276,7 +338,8 @@ public class Principale extends JFrame {
 			deplacerEnBas = 25;
 			
 			fractionner();
-		}		
+		}
+        
 	}
 	
 	/**
@@ -290,8 +353,9 @@ public class Principale extends JFrame {
 	/**
 	 * Réinitialisation des valeurs des différentes variables 
 	 * au redémmarage du jeu
+	 * 
 	 */
-	private void remiseAZero() {
+	private void remiseAZero(){
 		
 		this.score = 0;
 		this.vitesseJeu = 1.0f;
@@ -303,10 +367,64 @@ public class Principale extends JFrame {
 		horloge.setcyclesParSeconde(vitesseJeu);
 		fractionner();
 	}
+
+	
+	/*private void fractionner() {
+	
+			//PrintWriter writer = new PrintWriter( new FileWriter(NOM_FICHIER) );			
+		this.typePieceCourante = typePieceSuivante;
+		this.colonneCourante = typePieceCourante.getcolone1umn();
+		this.ligneCourante = typePieceCourante.getligne1();
+		this.rotationCourante = 0;
+		this.typePieceSuivante = Piece.values()[random.nextInt(NOMBRE_TYPES_PIECES)];
 		
 	
-	private void fractionner() {
+		if(!surface.caseVide(typePieceCourante, colonneCourante, ligneCourante, rotationCourante)) 
+		{
+			setFin(4);
+			this.perdu = true;
+			horloge.setPaused(true);
+			
+			while (getIndiceTableau()<TAILLE_TABLEAU &&  isStop() == false)
+			{
+				if(Integer.valueOf(getTableauScores()[getIndiceTableau()])< getScore())
+				{
+					setValeurIntermidiaire(getTableauScores()[getIndiceTableau()]);
+					setIndiceIntermidiaire(getIndiceTableau()+1);
+					
+					
+					getTableauScores()[getIndiceTableau()]=String.valueOf(getScore());
+					
+					setStop(true);
+					
+					
+					while (getFin()>getIndiceIntermidiaire())
+					{
+						
+						getTableauScores()[getFin()]=getTableauScores()[getFin()-1];
+						setFin(getFin()-1);
+						
+					}
+					getTableauScores()[getIndiceIntermidiaire()]=getValeurIntermidiaire();
+					if(ecrire)
+					{
+						for(int j=0;j<5;j++)
+						{
+							System.out.println(getTableauScores()[j]);
+						}
+						ecrire=false;
+					}
+					
+				}
+				
+			}
+			
+		}	
+		
+	}*/
 	
+	private void fractionner() {
+		
 		this.typePieceCourante = typePieceSuivante;
 		this.colonneCourante = typePieceCourante.getcolone1umn();
 		this.ligneCourante = typePieceCourante.getligne1();
@@ -316,6 +434,62 @@ public class Principale extends JFrame {
 		if(!surface.caseVide(typePieceCourante, colonneCourante, ligneCourante, rotationCourante)) {
 			this.perdu = true;
 			horloge.setPaused(true);
+			setFin(4);
+			
+			while (getIndiceTableau()<TAILLE_TABLEAU &&  isStop() == false)
+			{
+				
+				if(Integer.valueOf(getTableauScores()[getIndiceTableau()])< getScore())
+				{
+					
+					
+					setValeurIntermidiaire(getTableauScores()[getIndiceTableau()]);
+					setIndiceIntermidiaire(getIndiceTableau()+1);
+					
+					
+					getTableauScores()[getIndiceTableau()]=String.valueOf(getScore());
+					
+					setStop(true);
+					
+					/**
+					 * insertion de nouveau meilleur score dans le tableau des scores
+					 */
+					while (getFin()>getIndiceIntermidiaire())
+					{
+						
+						getTableauScores()[getFin()]=getTableauScores()[getFin()-1];
+						setFin(getFin()-1);
+						
+					}
+					getTableauScores()[getIndiceIntermidiaire()]=getValeurIntermidiaire();
+					
+					/**
+					 * Ecriture des nouveaux scores dans le fichier des meilleurs scores
+					 */
+					if(ecrire)
+					{
+						PrintWriter writer;
+						try {
+							writer = new PrintWriter( new FileWriter(NOM_FICHIER) );
+						
+						for(int j=0;j<5;j++)
+						{
+							writer.write(getTableauScores()[j]+"\n");
+						}
+						writer.close();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						ecrire=false;
+						
+						long tEnd = System.currentTimeMillis() + 1000;
+						while (System.currentTimeMillis() < tEnd) {
+						}
+						dispose();
+					}	
+				}	
+			}
 			
 		}		
 	}
@@ -406,11 +580,74 @@ public class Principale extends JFrame {
 	public int getPieceRotation() {
 		return rotationCourante;
 	}
-
 	
-	public static void main(String[] args) {
+	public String [] getTableauScores()
+	{
+		return tableauScores;
+	}
+	
+	public void setTableauScores(String [] scores)
+	{
+		tableauScores=scores;
+	}
+
+	public boolean isStop() {
+		return stop;
+	}
+
+
+	public void setStop(boolean stop) {
+		this.stop = stop;
+	}
+
+
+	public int getIndiceTableau() {
+		return indiceTableau;
+	}
+
+
+	public void setIndiceTableau(int indiceTableau) {
+		this.indiceTableau = indiceTableau;
+	}
+	
+	
+	public static void main(String[] args)  {
 		Principale tetris = new Principale();
 		tetris.commencerJeu();
+		
+		
+		
 	}
+
+
+	public String getValeurIntermidiaire() {
+		return valeurIntermidiaire;
+	}
+
+
+	public void setValeurIntermidiaire(String valeurIntermidiaire) {
+		this.valeurIntermidiaire = valeurIntermidiaire;
+	}
+
+
+	public int getIndiceIntermidiaire() {
+		return indiceIntermidiaire;
+	}
+
+
+	public void setIndiceIntermidiaire(int indiceIntermidiaire) {
+		this.indiceIntermidiaire = indiceIntermidiaire;
+	}
+
+    public int getFin()
+    {
+    	return this.fin;
+    }
+    
+    public void setFin(int fin)
+    {
+    	this.fin=fin;
+    }
+	
 
 }
