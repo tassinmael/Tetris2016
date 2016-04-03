@@ -1,0 +1,8 @@
+Pour générer le jar sous linux:
+   - Nous nous plaçons dans le répertoire de projet en utilisant la commande cd ...../src/
+   - Nous lançons la commande jar cvf tetris.jar Principale.class
+
+Pour lancer l'application sous linux:
+
+   - Nous nous plaçons dans le répertoire de projet en utilisant la commande cd ...../src/
+   - Nous lançons la commande java Principale
